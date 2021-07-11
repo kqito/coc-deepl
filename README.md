@@ -11,6 +11,9 @@
   <a href="https://github.com/kqito/coc-deepl/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kqito/coc-deepl" alt="License"></a>
 </p>
 
+![demo](https://user-images.githubusercontent.com/29191111/125201068-86ddd480-e2a8-11eb-9288-2786643b8652.gif)
+
+
 ## Installation
 First, install coc-deepl.
 
