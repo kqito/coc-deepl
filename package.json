@@ -1,6 +1,6 @@
 {
   "name": "coc-deepl",
-  "version": "0.0.0-development",
+  "version": "0.0.0",
   "description": "deepl extension for coc.nvim",
   "author": "kqito <29191111+kqito@users.noreply.github.com>",
   "license": "MIT",
@@ -16,7 +16,8 @@
     "clean": "rimraf dist",
     "watch": "node esbuild.js --watch",
     "build": "node esbuild.js",
-    "prepare": "node esbuild.js"
+    "prepare": "node esbuild.js",
+    "prepublishOnly": "node esbuild.js"
   },
   "prettier": {
     "singleQuote": true,
