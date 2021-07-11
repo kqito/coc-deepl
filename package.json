@@ -4,7 +4,7 @@
   "description": "deepl extension for coc.nvim",
   "author": "kqito <29191111+kqito@users.noreply.github.com>",
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "keywords": [
     "coc.nvim"
   ],
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "eslint src --ext ts",
-    "clean": "rimraf lib",
+    "clean": "rimraf dist",
     "watch": "node esbuild.js --watch",
     "build": "node esbuild.js",
     "prepare": "node esbuild.js"
@@ -24,6 +24,7 @@
     "semi": true
   },
   "devDependencies": {
+    "@types/node": "^16.3.1",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
     "coc.nvim": "^0.0.80",
@@ -43,18 +44,70 @@
       "type": "object",
       "title": "coc-deepl configuration",
       "properties": {
-        "coc-deepl.enabled": {
+        "deepl.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable coc-deepl extension"
+          "description": "Whether enable coc-deepl extension or not"
+        },
+        "deepl.plan": {
+          "type": "string",
+          "default": "free",
+          "description": "Plans for using deepl API",
+          "anyOf": [
+            {
+              "enum": [
+                "free",
+                "pro"
+              ]
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "deepl.targetLanguage": {
+          "type": "string",
+          "default": "EN",
+          "anyOf": [
+            {
+              "enum": [
+                "BG",
+                "CS",
+                "DA",
+                "DE",
+                "EL",
+                "EN-GB",
+                "EN-US",
+                "EN",
+                "ES",
+                "ET",
+                "FI",
+                "FR",
+                "HU",
+                "IT",
+                "JA",
+                "LT",
+                "LV",
+                "NL",
+                "PL",
+                "PT-PT",
+                "PT-BR",
+                "PT",
+                "RO",
+                "RU",
+                "SK",
+                "SL",
+                "SV",
+                "ZH"
+              ]
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Language after translation. if it's not specified, will set 'EN'"
         }
       }
-    },
-    "commands": [
-      {
-        "command": "coc-deepl.Command",
-        "title": "coc-deepl command title"
-      }
-    ]
+    }
   }
 }

@@ -1,54 +1,37 @@
-import { commands, CompleteResult, ExtensionContext, listManager, sources, window, workspace } from 'coc.nvim';
-import DemoList from './lists';
+import { ExtensionContext, workspace } from 'coc.nvim';
+import { Deepl, getDeeplIsEnabled, modes } from './deepl';
 
 export async function activate(context: ExtensionContext): Promise<void> {
-  window.showMessage(`coc-deepl works!`);
+  const { subscriptions } = context;
+  const { nvim } = workspace;
 
-  context.subscriptions.push(
-    commands.registerCommand('coc-deepl.Command', async () => {
-      window.showMessage(`coc-deepl Commands works!`);
-    }),
+  const isEnabled = getDeeplIsEnabled();
 
-    listManager.registerList(new DemoList(workspace.nvim)),
+  if (!isEnabled) {
+    return;
+  }
 
-    sources.createSource({
-      name: 'coc-deepl completion source', // unique id
-      doComplete: async () => {
-        const items = await getCompletionItems();
-        return items;
-      },
-    }),
+  const deepl = new Deepl(nvim, process.env.COC_DEEPL_API_KEY);
 
+  subscriptions.push(
     workspace.registerKeymap(
       ['n'],
-      'deepl-keymap',
+      'deepl',
       async () => {
-        window.showMessage(`registerKeymap`);
+        await deepl.translate(modes.normal);
       },
       { sync: false }
-    ),
-
-    workspace.registerAutocmd({
-      event: 'InsertLeave',
-      request: true,
-      callback: () => {
-        window.showMessage(`registerAutocmd on InsertLeave`);
-      },
-    })
+    )
   );
-}
 
-async function getCompletionItems(): Promise<CompleteResult> {
-  return {
-    items: [
-      {
-        word: 'TestCompletionItem 1',
-        menu: '[coc-deepl]',
+  subscriptions.push(
+    workspace.registerKeymap(
+      ['v'],
+      'deepl-selected',
+      async () => {
+        await deepl.translate(modes.visual);
       },
-      {
-        word: 'TestCompletionItem 2',
-        menu: '[coc-deepl]',
-      },
-    ],
-  };
+      { sync: false }
+    )
+  );
 }
