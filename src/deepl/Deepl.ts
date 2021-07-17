@@ -25,24 +25,42 @@ export class Deepl {
   }
 
   async translate(mode: Mode): Promise<void> {
-    const text = await getCurrentWord(mode);
-    if (!text) {
+    const target = await getCurrentWord(mode);
+    if (!target) {
       return;
     }
 
+    const documentations: Documentation[] = [];
     try {
-      const translateResult = await this.fetchTranslate(text);
-      const result = translateResult.translations[0].text;
+      const res = await this.fetchTranslate(target);
+      const translateResult = res.translations[0].text;
 
-      if (!result) {
+      if (!translateResult) {
         throw new Error('Translation failed.');
       }
 
-      await this.popup(result);
+      this.pushToMarkdownDocumentation(documentations, target);
+      this.pushToMarkdownDocumentation(documentations, translateResult);
+      await this.popup(documentations);
     } catch (err) {
       const message = err.message;
       window.showErrorMessage(message);
     }
+  }
+
+  private pushToMarkdownDocumentation(documentations: Documentation[], message: string, prefix?: string): void {
+    const filetype = 'markdown';
+    const content = prefix
+      ? `
+    ${prefix}
+    ${message}
+    `
+      : message;
+
+    documentations.push({
+      content,
+      filetype,
+    });
   }
 
   private async fetchTranslate(text: string): Promise<TranslateResult> {
@@ -70,16 +88,7 @@ export class Deepl {
     }
   }
 
-  private async popup(content: string): Promise<void> {
-    if (!content) return;
-
-    const docs: Documentation[] = [
-      {
-        content,
-        filetype: 'markdown',
-      },
-    ];
-
-    await this.floatFactory.show(docs);
+  private async popup(documentations: Documentation[]): Promise<void> {
+    await this.floatFactory.show(documentations);
   }
 }
