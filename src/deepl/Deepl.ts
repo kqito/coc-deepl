@@ -31,7 +31,7 @@ export class Deepl {
     }
 
     const documentations: Documentation[] = [];
-    try {
+    const translateDocumentations = async () => {
       const res = await this.fetchTranslate(target);
       const translateResult = res.translations[0].text;
 
@@ -41,6 +41,10 @@ export class Deepl {
 
       this.pushToMarkdownDocumentation(documentations, target);
       this.pushToMarkdownDocumentation(documentations, translateResult);
+    };
+
+    try {
+      await window.withProgress({ title: 'Translating...', cancellable: false }, translateDocumentations);
       await this.popup(documentations);
     } catch (err) {
       const message = err.message;
