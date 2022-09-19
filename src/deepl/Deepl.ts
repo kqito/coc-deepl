@@ -33,14 +33,18 @@ export class Deepl {
     const documentations: Documentation[] = [];
     const translateDocumentations = async () => {
       const res = await this.fetchTranslate(target);
-      const translateResult = res.translations[0].text;
-
-      if (!translateResult) {
-        throw new Error('Translation failed.');
+      if (!res.translations.length) {
+        Promise.reject('Translation failed.');
       }
 
-      this.pushToMarkdownDocumentation(documentations, target);
-      this.pushToMarkdownDocumentation(documentations, translateResult);
+      documentations.push(this.buildMarkdownDoc(target));
+      res.translations.forEach(({ text }) => {
+        if (text === undefined) {
+          return;
+        }
+
+        documentations.push(this.buildMarkdownDoc(text));
+      });
     };
 
     try {
@@ -52,7 +56,7 @@ export class Deepl {
     }
   }
 
-  private pushToMarkdownDocumentation(documentations: Documentation[], message: string, prefix?: string): void {
+  private buildMarkdownDoc(message: string, prefix?: string) {
     const filetype = 'markdown';
     const content = prefix
       ? `
@@ -61,10 +65,10 @@ export class Deepl {
     `
       : message;
 
-    documentations.push({
+    return {
       content,
       filetype,
-    });
+    };
   }
 
   private async fetchTranslate(text: string): Promise<TranslateResult> {
