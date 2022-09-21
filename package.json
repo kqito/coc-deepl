@@ -66,6 +66,11 @@
             }
           ]
         },
+        "deepl.isShowSource": {
+          "type": "boolean",
+          "default": false,
+          "description": "Boolean indicate to show translate source in translation result"
+        },
         "deepl.targetLanguage": {
           "type": "string",
           "default": "EN",

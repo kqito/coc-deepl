@@ -85,6 +85,26 @@ free
 </details>
 
 <details>
+<summary>deepl.isShowSource</summary>
+<p>
+
+### Description
+Boolean indicate to show translate source in translation result
+
+### Type
+
+```ts
+boolean
+```
+
+### Default value
+```ts
+false
+```
+</p>
+</details>
+
+<details>
 <summary>deepl.targetLanguage</summary>
 <p>
 

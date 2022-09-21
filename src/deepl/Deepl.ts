@@ -2,7 +2,13 @@ import { Documentation, FloatFactory, Neovim, window, fetch } from 'coc.nvim';
 import { DEEPL_FREE_PLAN_BASE_URL, DEEPL_PRO_PLAN_BASE_URL, DEEPL_TRANSLATE_ENDPOINT, Mode } from './constants';
 import { URL } from 'url';
 import { getCurrentWord } from './utils/coc/getCurrentWord';
-import { DeeplPlan, getDeeplPlan, getDeeplTargetLanguage, TargetLanguage } from './getConfigurationValue';
+import {
+  DeeplPlan,
+  getDeeplIsShowSource,
+  getDeeplPlan,
+  getDeeplTargetLanguage,
+  TargetLanguage,
+} from './getConfigurationValue';
 
 interface TranslateResult {
   translations: {
@@ -15,6 +21,7 @@ export class Deepl {
   private floatFactory: FloatFactory;
   private apiKey: string | undefined;
   private targetLanguage: TargetLanguage;
+  private isShowSource: boolean;
   private plan: DeeplPlan;
 
   constructor(nvim: Neovim, apiKey: string | undefined) {
@@ -22,6 +29,7 @@ export class Deepl {
     this.apiKey = apiKey;
     this.targetLanguage = getDeeplTargetLanguage();
     this.plan = getDeeplPlan();
+    this.isShowSource = getDeeplIsShowSource();
   }
 
   async translate(mode: Mode): Promise<void> {
@@ -37,7 +45,10 @@ export class Deepl {
         Promise.reject('Translation failed.');
       }
 
-      documentations.push(this.buildMarkdownDoc(target));
+      if (this.isShowSource) {
+        documentations.push(this.buildMarkdownDoc(target));
+      }
+
       res.translations.forEach(({ text }) => {
         if (text === undefined) {
           return;
